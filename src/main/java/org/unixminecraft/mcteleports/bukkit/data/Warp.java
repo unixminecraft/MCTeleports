@@ -83,7 +83,7 @@ public final class Warp implements ConfigurationSerializable {
 			disallowedNames.add("permission");
 			disallowedNames.add("remove");
 			
-			final String nameValue = ((String) warpConfiguration.get(KEY_PERMISSION_ENABLED)).toLowerCase();
+			final String nameValue = ((String) warpConfiguration.get(KEY_NAME)).toLowerCase();
 			
 			if(disallowedNames.contains(nameValue.toLowerCase())) {
 				name = DEFAULT_NAME;
@@ -103,7 +103,7 @@ public final class Warp implements ConfigurationSerializable {
 			permissionEnabled = DEFAULT_PERMISSION_ENABLED;
 		}
 		else {
-			permissionEnabled = ((Boolean) warpConfiguration.get(KEY_NAME)).booleanValue();
+			permissionEnabled = ((Boolean) warpConfiguration.get(KEY_PERMISSION_ENABLED)).booleanValue();
 		}
 		
 		if(!warpConfiguration.containsKey(KEY_LOCATION)) {
