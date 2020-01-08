@@ -62,11 +62,26 @@ public final class Home implements ConfigurationSerializable {
 		else if(homeConfiguration.get(KEY_UUID) == null) {
 			uuid = DEFAULT_UUID;
 		}
-		else if(!(homeConfiguration.get(KEY_UUID) instanceof UUID)) {
+		else if(!(homeConfiguration.get(KEY_UUID) instanceof String)) {
 			uuid = DEFAULT_UUID;
 		}
 		else {
-			uuid = (UUID) homeConfiguration.get(KEY_UUID);
+			
+			final String uuidValue = (String) homeConfiguration.get(KEY_UUID);
+			UUID attemptedUUID = null;
+			try {
+				attemptedUUID = UUID.fromString(uuidValue);
+			}
+			catch(IllegalArgumentException e) {
+				attemptedUUID = DEFAULT_UUID;
+			}
+			
+			if(attemptedUUID == null) {
+				uuid = DEFAULT_UUID;
+			}
+			else {
+				uuid = attemptedUUID;
+			}
 		}
 		
 		if(!homeConfiguration.containsKey(KEY_LOCATION)) {
@@ -90,7 +105,7 @@ public final class Home implements ConfigurationSerializable {
 		
 		final HashMap<String, Object> homeConfiguration = new HashMap<String, Object>();
 		
-		homeConfiguration.put(KEY_UUID, uuid);
+		homeConfiguration.put(KEY_UUID, uuid.toString());
 		homeConfiguration.put(KEY_LOCATION, location);
 		
 		return homeConfiguration;

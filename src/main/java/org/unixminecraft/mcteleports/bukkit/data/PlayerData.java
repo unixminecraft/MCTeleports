@@ -75,7 +75,22 @@ public final class PlayerData implements ConfigurationSerializable {
 			uuid = DEFAULT_UUID;
 		}
 		else {
-			uuid = (UUID) playerDataConfiguration.get(KEY_UUID);
+			
+			final String uuidValue = (String) playerDataConfiguration.get(KEY_UUID);
+			UUID attemptedUUID = null;
+			try {
+				attemptedUUID = UUID.fromString(uuidValue);
+			}
+			catch(IllegalArgumentException e) {
+				attemptedUUID = DEFAULT_UUID;
+			}
+			
+			if(attemptedUUID == null) {
+				uuid = DEFAULT_UUID;
+			}
+			else {
+				uuid = attemptedUUID;
+			}
 		}
 		
 		return new PlayerData(name, uuid);
@@ -87,7 +102,7 @@ public final class PlayerData implements ConfigurationSerializable {
 		final HashMap<String, Object> playerDataConfiguration = new HashMap<String, Object>();
 		
 		playerDataConfiguration.put(KEY_NAME, name);
-		playerDataConfiguration.put(KEY_UUID, uuid);
+		playerDataConfiguration.put(KEY_UUID, uuid.toString());
 		
 		return playerDataConfiguration;
 	}
