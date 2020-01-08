@@ -5,7 +5,7 @@
   <groupId>org.unixminecraft.mcteleports.bukkit</groupId>
   <artifactId>MCTeleports-Bukkit</artifactId>
   <packaging>jar</packaging>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <name>MCTeleports-Bukkit</name>
   
   <url>http://maven.apache.org</url>
