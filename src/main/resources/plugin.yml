@@ -1,6 +1,6 @@
 name: MCTeleports
 main: org.unixminecraft.mcteleports.bukkit.MCTeleports
-version: 0.0.3
+version: 0.0.4
 author: unixminecraft
 api-version: 1.15
 
