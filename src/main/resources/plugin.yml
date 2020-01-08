@@ -1,0 +1,17 @@
+name: MCTeleports
+main: org.unixminecraft.mcteleports.bukkit.MCTeleports
+version: 0.0.1
+author: unixminecraft
+api-version: 1.15
+
+commands:
+  sethome:
+    description: Set your home
+  home:
+    description: Teleport to your home
+  setspawn:
+    description: Set the world's spawn
+  spawn:
+    description: Teleport to the spawn
+  warp:
+    description: Base command for warps
