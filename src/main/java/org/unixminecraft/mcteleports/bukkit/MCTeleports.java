@@ -78,6 +78,8 @@ public final class MCTeleports extends JavaPlugin implements Listener {
 	private ConcurrentHashMap<String, Spawn> spawns;
 	private ConcurrentHashMap<String, Warp> warps;
 	
+	private HashSet<Character> allowedCharacters;
+	
 	@Override
 	public void onEnable() {
 		
@@ -358,6 +360,19 @@ public final class MCTeleports extends JavaPlugin implements Listener {
 		}
 		
 		getServer().getPluginManager().registerEvents(this, this);
+		
+		allowedCharacters = new HashSet<Character>();
+		
+		String allowedCharacterValues = "";
+		
+		allowedCharacterValues += "abcdefghijklmnopqrstuvwxyz";
+		allowedCharacterValues += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		allowedCharacterValues += "0123456789";
+		allowedCharacterValues += "-_";
+		
+		for(int index = 0; index < allowedCharacterValues.length(); index++) {
+			allowedCharacters.add(Character.valueOf(allowedCharacterValues.charAt(index)));
+		}
 	}
 	
 	@Override
@@ -619,6 +634,15 @@ public final class MCTeleports extends JavaPlugin implements Listener {
 					return true;
 				}
 				
+				final String warpName = parameters[1].toLowerCase();
+				
+				for(int index = 0; index < warpName.length(); index++) {
+					if(!allowedCharacters.contains(Character.valueOf(warpName.charAt(index)))) {
+						sendMessage(player, "&cYou cannot use the following character in a warp name:&r &6" + String.valueOf(warpName.charAt(index)) + "&r&c.&r");
+						return true;
+					}
+				}
+				
 				final HashSet<String> disallowedNames = new HashSet<String>();
 				
 				disallowedNames.add("set");
@@ -626,7 +650,6 @@ public final class MCTeleports extends JavaPlugin implements Listener {
 				disallowedNames.add("permission");
 				disallowedNames.add("remove");
 				
-				final String warpName = parameters[1].toLowerCase();
 				if(disallowedNames.contains(warpName)) {
 					sendMessage(player, "&cYou may not use that name for a warp.&r");
 					return true;
