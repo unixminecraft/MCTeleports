@@ -1,5 +1,5 @@
 /*
- * MCTeleports Copyright (C) 2019 unixminecraft
+ * MCTeleports Copyright (C) 2019-2020 unixminecraft
  * 
  * This program is free software: you can redistribute it and/or modify it under the terms of the
  * GNU General Public License as published by the Free Software Foundation, either version 3 of the
@@ -35,11 +35,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.unixminecraft.mcteleports.bukkit.data.Home;
 import org.unixminecraft.mcteleports.bukkit.data.PlayerData;
 import org.unixminecraft.mcteleports.bukkit.data.Spawn;
 import org.unixminecraft.mcteleports.bukkit.data.Warp;
+
+import com.onarandombox.MultiverseCore.MultiverseCore;
 
 import net.md_5.bungee.api.ChatColor;
 
@@ -86,6 +90,20 @@ public final class MCTeleports extends JavaPlugin implements Listener {
 		logger = getLogger();
 		
 		displayLicenseInformation();
+		
+		final PluginManager pluginManager = getServer().getPluginManager();
+		
+		final Plugin possibleMultiverseCorePlugin = pluginManager.getPlugin("Multiverse-Core");
+		if(possibleMultiverseCorePlugin == null) {
+			
+			logger.log(Level.SEVERE, "Multiverse-Core plugin not found, cannot start MCTeleports.");
+			throw new RuntimeException("Multiverse-Core plugin not found, cannot start MCTeleports.");
+		}
+		if(!(possibleMultiverseCorePlugin instanceof MultiverseCore)) {
+			
+			logger.log(Level.SEVERE, "Possible Multiverse-Core plugin not the correct plugin, cannot start MCTeleports.");
+			throw new RuntimeException("Possible Multiverse-Core plugin not the correct plugin, cannot start MCTeleports.");
+		}
 		
 		ConfigurationSerialization.registerClass(PlayerData.class);
 		ConfigurationSerialization.registerClass(Home.class);
@@ -359,7 +377,7 @@ public final class MCTeleports extends JavaPlugin implements Listener {
 			warps.put(warp.getName().toLowerCase(), warp);
 		}
 		
-		getServer().getPluginManager().registerEvents(this, this);
+		pluginManager.registerEvents(this, this);
 		
 		allowedCharacters = new HashSet<Character>();
 		
@@ -1119,28 +1137,25 @@ public final class MCTeleports extends JavaPlugin implements Listener {
 	
 	private void displayLicenseInformation() {
 		
-		logger.log(Level.INFO, "//==============================================//");
-		logger.log(Level.INFO, "// MCTeleports Copyright (C) 2019 unixminecraft //");
-		logger.log(Level.INFO, "//                                              //");
-		logger.log(Level.INFO, "// This program is free software: you can       //");
-		logger.log(Level.INFO, "// redistribute it and/or modify it under       //");
-		logger.log(Level.INFO, "// the terms of these GNU General Public        //");
-		logger.log(Level.INFO, "// License as published by the Free Software    //");
-		logger.log(Level.INFO, "// Foundation, either version 3 of the          //");
-		logger.log(Level.INFO, "// License, or (at your opinion) any later      //");
-		logger.log(Level.INFO, "// version.                                     //");
-		logger.log(Level.INFO, "//                                              //");
-		logger.log(Level.INFO, "// This program is distributed in the hope      //");
-		logger.log(Level.INFO, "// that is till be useful, but WITHOUT ANY      //");
-		logger.log(Level.INFO, "// WARRANTY; without even the implied           //");
-		logger.log(Level.INFO, "// warranty of MERCHANTABILITY or FITNESS       //");
-		logger.log(Level.INFO, "// FOR A PARTICULAR PURPOSE. See GNU General    //");
-		logger.log(Level.INFO, "// Public License for more details.             //");
-		logger.log(Level.INFO, "//                                              //");
-		logger.log(Level.INFO, "// You should have received a copy of the       //");
-		logger.log(Level.INFO, "// GNU General Public License along with        //");
-		logger.log(Level.INFO, "// this program. If not, see                    //");
-		logger.log(Level.INFO, "// <http://www.gnu.org/licenses/>               //");
-		logger.log(Level.INFO, "//==============================================//");
+		logger.log(Level.INFO, "//===================================================//");
+		logger.log(Level.INFO, "// MCTeleports Copyright (C) 2019-2020 unixminecraft //");
+		logger.log(Level.INFO, "//                                                   //");
+		logger.log(Level.INFO, "// This program is free software: you can            //");
+		logger.log(Level.INFO, "// redistribute it and/or modify it under the terms  //");
+		logger.log(Level.INFO, "// of these GNU General Public License as published  //");
+		logger.log(Level.INFO, "// by the Free Software Foundation, either version 3 //");
+		logger.log(Level.INFO, "// of the License, or (at your opinion) any later    //");
+		logger.log(Level.INFO, "// version.                                          //");
+		logger.log(Level.INFO, "//                                                   //");
+		logger.log(Level.INFO, "// This program is distributed in the hope that it   //");
+		logger.log(Level.INFO, "// will be useful, but WITHOUT ANY WARRANTY; without //");
+		logger.log(Level.INFO, "// even the implied warranty of MERCHANTABILITY or   //");
+		logger.log(Level.INFO, "// FITNESS FOR A PARTICULAR PURPOSE. See GNU General //");
+		logger.log(Level.INFO, "// Public License for more details.                  //");
+		logger.log(Level.INFO, "//                                                   //");
+		logger.log(Level.INFO, "// You should have received a copy of the GNU        //");
+		logger.log(Level.INFO, "// General Public License along with this program.   //");
+		logger.log(Level.INFO, "// If not, see <http://www.gnu.org/licenses/>        //");
+		logger.log(Level.INFO, "//===================================================//");
 	}
 }

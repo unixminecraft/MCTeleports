@@ -1,8 +1,10 @@
 name: MCTeleports
 main: org.unixminecraft.mcteleports.bukkit.MCTeleports
-version: 0.0.5
+version: 0.0.6
 author: unixminecraft
 api-version: 1.15
+
+depend: Multiverse-Core
 
 commands:
   sethome:

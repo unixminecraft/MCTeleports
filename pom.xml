@@ -5,7 +5,7 @@
   <groupId>org.unixminecraft.mcteleports.bukkit</groupId>
   <artifactId>MCTeleports-Bukkit</artifactId>
   <packaging>jar</packaging>
-  <version>0.0.5</version>
+  <version>0.0.6</version>
   <name>MCTeleports-Bukkit</name>
   
   <url>http://maven.apache.org</url>
@@ -17,24 +17,17 @@
   <dependencies>
     <dependency>
       <groupId>org.spigotmc</groupId>
-      <artifactId>spigot-api</artifactId>
-      <version>1.15.1-R0.1-SNAPSHOT</version>
+      <artifactId>spigot</artifactId>
+      <version>1.15.2-R0.1-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.onarandombox.multiversecore</groupId>
+      <artifactId>Multiverse-Core</artifactId>
+      <version>4.1.0</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
-  
-  <repositories>
-    <repository>
-      <id>spigot-repo</id>
-      <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
   
   <build>
     <plugins>
