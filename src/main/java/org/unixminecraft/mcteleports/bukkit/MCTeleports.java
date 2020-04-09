@@ -27,7 +27,6 @@ import java.util.logging.Logger;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -45,8 +44,6 @@ import org.unixminecraft.mcteleports.bukkit.data.Spawn;
 import org.unixminecraft.mcteleports.bukkit.data.Warp;
 
 import com.onarandombox.MultiverseCore.MultiverseCore;
-import com.onarandombox.MultiverseCore.api.MVWorldManager;
-import com.onarandombox.MultiverseCore.api.MultiverseWorld;
 
 import net.md_5.bungee.api.ChatColor;
 
@@ -73,8 +70,6 @@ public final class MCTeleports extends JavaPlugin implements Listener {
 	private static final String WARP_DIRECTORY_NAME = "Warp_Data";
 	
 	private Logger logger;
-	
-	private MVWorldManager mvWorldManager;
 	
 	private File playerDirectory;
 	private File homeDirectory;
@@ -109,9 +104,6 @@ public final class MCTeleports extends JavaPlugin implements Listener {
 			logger.log(Level.SEVERE, "Possible Multiverse-Core plugin not the correct plugin, cannot start MCTeleports.");
 			throw new RuntimeException("Possible Multiverse-Core plugin not the correct plugin, cannot start MCTeleports.");
 		}
-		
-		final MultiverseCore multiverseCorePlugin = (MultiverseCore) possibleMultiverseCorePlugin;
-		mvWorldManager = multiverseCorePlugin.getMVWorldManager();
 		
 		ConfigurationSerialization.registerClass(PlayerData.class);
 		ConfigurationSerialization.registerClass(Home.class);
@@ -296,19 +288,24 @@ public final class MCTeleports extends JavaPlugin implements Listener {
 				continue;
 			}
 			
-			final ConfigurationSection homeConfigurationSection = homeConfiguration.getConfigurationSection("home");
-			final String playerIdValue = homeConfigurationSection.getString("uuid");
-			final String worldName = getWorldName(homeConfigurationSection);
-			
-			if(!isWorldLoaded(worldName)) {
+			final Home home;
+			try {
+				home = homeConfiguration.getSerializable("home", Home.class);
+			}
+			catch(IllegalArgumentException e) {
 				
-				logger.log(Level.INFO, "Unable to load home for UUID " + playerIdValue);
-				logger.log(Level.INFO, "Skipping home.");
-				logger.log(Level.INFO, "World " + worldName + " is not loaded.");
+				logger.log(Level.WARNING, "Unable to deserialize home configuration file at " + homeConfigurationFilePath);
+				logger.log(Level.WARNING, "Skipping home.");
+				logger.log(Level.WARNING, "IllegalArgumentException thrown.", e);
 				continue;
 			}
 			
-			final Home home = homeConfiguration.getSerializable("home", Home.class);
+			if(home == null) {
+				
+				logger.log(Level.WARNING, "Home configuration is still null for home configuration file at " + homeConfigurationFilePath);
+				logger.log(Level.WARNING, "Skipping home.");
+				continue;
+			}
 			
 			homes.put(home.getUniqueId(), home);
 		}
@@ -350,18 +347,24 @@ public final class MCTeleports extends JavaPlugin implements Listener {
 				continue;
 			}
 			
-			final ConfigurationSection spawnConfigurationSection = spawnConfiguration.getConfigurationSection("spawn");
-			final String worldName = getWorldName(spawnConfigurationSection);
-			
-			if(!isWorldLoaded(worldName)) {
+			final Spawn spawn;
+			try {
+				spawn = spawnConfiguration.getSerializable("spawn", Spawn.class);
+			}
+			catch(IllegalArgumentException e) {
 				
-				logger.log(Level.INFO, "Unable to load spawn for world " + worldName);
-				logger.log(Level.INFO, "Skipping spawn.");
-				logger.log(Level.INFO, "World " + worldName + " is not loaded.");
+				logger.log(Level.WARNING, "Unable to deserialize spawn configuration file at " + spawnConfigurationFilePath);
+				logger.log(Level.WARNING, "Skipping spawn.");
+				logger.log(Level.WARNING, "IllegalArgumentException thrown.", e);
 				continue;
 			}
 			
-			final Spawn spawn = spawnConfiguration.getSerializable("spawn", Spawn.class);
+			if(spawn == null) {
+				
+				logger.log(Level.WARNING, "Spawn configuration is still null for spawn configuration file at " + spawnConfigurationFilePath);
+				logger.log(Level.WARNING, "Skipping spawn.");
+				continue;
+			}
 			
 			spawns.put(spawn.getLocation().getWorld().getName(), spawn);
 		}
@@ -403,19 +406,24 @@ public final class MCTeleports extends JavaPlugin implements Listener {
 				continue;
 			}
 			
-			final ConfigurationSection warpConfigurationSection = warpConfiguration.getConfigurationSection("warp");
-			final String warpName = warpConfigurationSection.getString("name");
-			final String worldName = getWorldName(warpConfigurationSection);
-			
-			if(!isWorldLoaded(worldName)) {
+			final Warp warp;
+			try {
+				warp = warpConfiguration.getSerializable("warp", Warp.class);
+			}
+			catch(IllegalArgumentException e) {
 				
-				logger.log(Level.INFO, "Unable to load warp " + warpName);
-				logger.log(Level.INFO, "Skipping warp.");
-				logger.log(Level.INFO, "World " + worldName + " is not loaded.");
+				logger.log(Level.WARNING, "Unable to deserialize warp configuration file at " + warpConfigurationFilePath);
+				logger.log(Level.WARNING, "Skipping warp.");
+				logger.log(Level.WARNING, "IllegalArgumentException thrown.", e);
 				continue;
 			}
 			
-			final Warp warp = warpConfiguration.getSerializable("warp", Warp.class);
+			if(warp == null) {
+				
+				logger.log(Level.WARNING, "Warp configuration is still null for warp configuration file at " + warpConfigurationFilePath);
+				logger.log(Level.WARNING, "Skipping warp.");
+				continue;
+			}
 			
 			warps.put(warp.getName().toLowerCase(), warp);
 		}
@@ -979,22 +987,6 @@ public final class MCTeleports extends JavaPlugin implements Listener {
 			logger.log(Level.INFO, "Name: " + playerName);
 			logger.log(Level.INFO, "UUID: " + playerId.toString());
 		}
-	}
-	
-	private String getWorldName(final ConfigurationSection configurationSection) {
-		
-		return configurationSection.getConfigurationSection("location").getString("world");
-	}
-	
-	private boolean isWorldLoaded(final String worldName) {
-		
-		final MultiverseWorld multiverseWorld = mvWorldManager.getMVWorld(worldName);
-		
-		if(multiverseWorld == null) {
-			return false;
-		}
-		
-		return multiverseWorld.getAutoLoad();
 	}
 	
 	private void sendMessage(final Player player, final String message) {
